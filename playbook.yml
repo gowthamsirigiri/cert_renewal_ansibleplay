@@ -1,0 +1,24 @@
+- name: Renew system-level development certificates
+  hosts: linux
+  become: yes
+  tasks:
+    - name: Create backup directory to store the existing working certs for backup.
+      ansible.builtin.file:
+        path: /etc/bkp_certs
+        state: directory
+        mode: '0700'
+
+    - name: Backup existing certs with timestamp
+      ansible.builtin.shell: "cp -r /etc/certs /etc/bkp_certs/certs_$(date +%Y%m%d_%H%M%S)"
+      
+    - name: Deploy new development certificates
+      ansible.builtin.copy:
+        src: /usr/local/bin/cert #ensure your local path of the certificates
+        dest: /etc/certs/
+        mode: '0770'
+        owner: root
+        group: root
+
+    - name: Reboot to apply system-level changes
+      ansible.builtin.reboot:
+        msg: "Rebooting to apply new certificates"
