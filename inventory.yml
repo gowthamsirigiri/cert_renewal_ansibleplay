@@ -1,0 +1,10 @@
+#sample inventory file structure
+all:
+  vars:
+    ansible_user: user
+    ansible_password: password
+  children:
+    linux:
+      hosts:
+        ip1:
+        ip2:
